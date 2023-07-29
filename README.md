@@ -25,13 +25,13 @@ bool unload(void);
 const says that those strings, when passed in as arguments, must remain constant; you won’t be able to change them, accidentally or otherwise!
 
 
-texts/
+### texts/
 
 
 Includes texts that we can use to test our code. 
 
 
-Makefile
+### Makefile
 
 
 And, lastly, recall that make automates compilation of your code so that you don’t have to execute clang manually along with a whole bunch of switches. However, as your programs grow in size, make won’t be able to infer from context anymore how to compile your code; you’ll need to start telling make how to compile your program, particularly when they involve multiple source (i.e., .c) files, as in the case of this problem. And so we’ll utilize a Makefile, a configuration file that tells make exactly what to do. Open up Makefile, and you should see four lines:
@@ -50,7 +50,7 @@ Capitalization aside, your implementation of check should only return true for w
 You may assume that any dictionary passed to your program will be structured exactly like ours, alphabetically sorted from top to bottom with one word per line, each of which ends with \n. You may also assume that dictionary will contain at least one word, that no word will be longer than LENGTH (a constant defined in dictionary.h) characters, that no word will appear more than once, that each word will contain only lowercase alphabetical characters and possibly apostrophes, and that no word will start with an apostrophe.
 
 
-Hints 
+### Hints 
 
 
 To compare two strings case-insensitively, you may find strcasecmp (declared in strings.h). 
@@ -58,7 +58,7 @@ To compare two strings case-insensitively, you may find strcasecmp (declared in 
 Be sure to free in unload any memory that you allocated in load. 
 
 
-speller.c
+### speller.c
 
 
 Within the default dictionary, mind you, are 143,091 words, all of which must be loaded into memory! In fact, take a peek at that file to get a sense of its structure and size. Notice that every word in that file appears in lowercase (even, for simplicity, proper nouns and acronyms). From top to bottom, the file is sorted lexicographically, with only one word per line (each of which ends with \n). No word is longer than 45 characters, and no word appears more than once.
@@ -318,7 +318,7 @@ double calculate(const struct rusage *b, const struct rusage *a)
 ```
 
 
-dictionary.c
+### dictionary.c
 
 
 We’ve defined a struct called node that represents a node in a hash table.
@@ -341,12 +341,12 @@ node *table[N];
 ```
 
 
-load()
+#### load()
 
 
 A hash table (a data structure) is an array of linked lists. 
 
-
+![Alt text](https://pbs.twimg.com/media/F2NfEjCXYAEqVBC?format=jpg&name=large)
 
 A hash function pick which linked list to insert a word into. 
 
@@ -405,7 +405,7 @@ unsigned int hash(const char *word)
 It takes word as an argument, the take the index of the first character of the word in the alphabet by subtracting 'A' from it, for example Z - A is 25 which is the last index in our hash table. 
 
 
-check() 
+#### check() 
 
 
 This function takes a word from the text as an argument and return true if it is in dictionary else it returns false. 
@@ -437,7 +437,7 @@ While our cursor is not a NULL compare word with the word inside the node cursor
 If you went trough the whole linked list and the word is not there then return false at the end. 
 
 
-unload()
+#### unload()
 
 
 Finally we are going to write a function that free the memory we allocate for each node in our hash table: 
@@ -477,3 +477,5 @@ While cursor doesn't point to NULL create a temporary node pointer to point to c
 Then check in each iteration in the hash table whether cursor is NULL and i is N - 1, that mean check if cursor points to NULL and we have reached the last bucket or linked list in our hash table, if that's true then we have freed all the nodes in the hash table and we can return true, if that is not true we return false at the end of the function. 
 
 Output example of running the program: 
+
+![Alt text](https://pbs.twimg.com/media/F2Nfn5rW4AAvI1i?format=png&name=small)
