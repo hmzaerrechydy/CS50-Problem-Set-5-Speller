@@ -14,7 +14,7 @@ Notice our use of #define, a “preprocessor directive” that defines a “cons
 
 Below are prototypes of five functions that are written in dictionary.c: 
 
-```
+```C
 bool check(const char *word);
 unsigned int hash(const char *word);
 bool load(const char *dictionary);
@@ -63,21 +63,21 @@ Be sure to free in unload any memory that you allocated in load.
 
 Within the default dictionary, mind you, are 143,091 words, all of which must be loaded into memory! In fact, take a peek at that file to get a sense of its structure and size. Notice that every word in that file appears in lowercase (even, for simplicity, proper nouns and acronyms). From top to bottom, the file is sorted lexicographically, with only one word per line (each of which ends with \n). No word is longer than 45 characters, and no word appears more than once.
 
-```
+```C
 // Determine dictionary to use
     char *dictionary = (argc == 3) ? argv[1] : DICTIONARY;
 ```
 
 If user entered 3 arguments then the string dictionary will be assigned argv[1] else assign the default path in DICTIONARY to the dictionary we will be using.  
 
-```
+```C
 // Structures for timing data
     struct rusage before, after;
 ```
 
 We created two variables before and after, and both are a data structure to store the resource usages returned from the getrusage() function. 
 
-```
+```C
 // Load dictionary
     getrusage(RUSAGE_SELF, &before);
     bool loaded = load(dictionary);
@@ -88,7 +88,7 @@ We call getrusage() before calling load() and store the data in before, then we 
 
 Helpful article to learn more about getrusage: https://man7.org/linux/man-pages/man2/getrusage.2.html
 
-```
+```C
     // Exit if dictionary not loaded
     if (!loaded)
     {
@@ -101,14 +101,14 @@ Print an error text and stop the program if we can't load dictionary.
 
 We calculate time to load dictionary using the load() function using the function calculate() that takes two arguments before and after and store that value in the time_load variable: 
 
-```
+```C
     // Calculate time to load dictionary
     time_load = calculate(&before, &after);
 ```
 
 In the following block we open the text file provided by the use, if argc is 3 then the file name is at argv[2] else it's at argv[1], we store the name in text, open the file, and if it returns NULL we print an error message, call unload() and stop the program. 
 
-```
+```C
     // Try to open text
     char *text = (argc == 3) ? argv[2] : argv[1];
     FILE *file = fopen(text, "r");
@@ -131,7 +131,7 @@ word is a char array or string to store the current word in the text.
 
 c stores the current character in the text. 
 
-```
+```C
     // Prepare to spell-check
     int index = 0, misspellings = 0, words = 0;
     char word[LENGTH + 1];
@@ -141,13 +141,13 @@ c stores the current character in the text.
 
 Now we will read each character in the text using this while loop and copy it to c.
 
-```
+```C
 while (fread(&c, sizeof(char), 1, file)){...}
 ```
 
 Inside this loop: 
 
-```
+```C
 // Allow only alphabetical characters and apostrophes
         if (isalpha(c) || (c == '\'' && index > 0))
         {
@@ -169,7 +169,7 @@ Inside this loop:
 
 if  c or current character is in the alphabet or an apostrophe then add it to word, and update the index by 1, if the word passes LENGTH then read the rest of it and reset index to 0. 
 
-```
+```C
         // Ignore words with numbers (like MS Word can)
         else if (isdigit(c))
         {
@@ -183,7 +183,7 @@ if  c or current character is in the alphabet or an apostrophe then add it to wo
 
 else if character is a digit then read the rest of the word and reset index to 0 but we will not pass this word to check() for spell checking because it contains a digit.  
 
-```
+```C
 // We must have found a whole word
         else if (index > 0)
         {
@@ -215,7 +215,7 @@ else if character is a digit then read the rest of the word and reset index to 0
 
 if the character is not an alphabet, apostrophe or a digit and the index is bigger than 0 then we have reached the end of a word, we pass \0 to the current index, add 1 to words counter. Using getrusage() we get resource usage measures before and after calling check(), we store the data in before and after. Afterward we calculate the time check() takes to run and add it to time_check to get the total time the function takes to spell check the whole text. If the word is misspelled we print the word, update misspellings by 1 and finally reset index to 0. 
 
-```
+```C
     // Check whether there was an error
     if (ferror(file))
     {
@@ -232,12 +232,12 @@ If there was an error reading the file then close it, print an error message, un
 
 We close now the file because we don't need it anymore after spell checking all the words: 
 
-```
+```C
     // Close text
     fclose(file);
 ```
 
-```
+```C
     // Determine dictionary's size
     getrusage(RUSAGE_SELF, &before);
     unsigned int n = size();
@@ -251,11 +251,12 @@ Using size() return number of words in the dictionary and store it in n and use 
 
 unsigned int in c: 
 As the name suggests unsigned int in a C programming language is a datatype that represents an integer value without a sign. It can hold zero, and positive integers but it is not allowed to store or hold negative values.
+
 Source: https://www.prepbytes.com/blog/c-programming/unsigned-int-in-c
 
 Calculate time to determine dictionary's size and store it in time_size. 
 
-```
+```C
     // Unload dictionary
     getrusage(RUSAGE_SELF, &before);
     bool unloaded = unload();
@@ -280,7 +281,7 @@ In time_unload calculate time to unload dictionary.
 
 Report all this data that we have gathered at the end of the main function: 
 
-```
+```C
     // Report benchmarks
     printf("\nWORDS MISSPELLED:     %d\n", misspellings);
     printf("WORDS IN DICTIONARY:  %d\n", n);
@@ -298,7 +299,7 @@ Report all this data that we have gathered at the end of the main function:
 
 Finally that how the calculate function works to return the number of seconds it takes to run the functions: load, check, size and unload. 
 
-```
+```C
 // Returns number of seconds between b and a
 double calculate(const struct rusage *b, const struct rusage *a)
 {
@@ -323,7 +324,7 @@ double calculate(const struct rusage *b, const struct rusage *a)
 
 We’ve defined a struct called node that represents a node in a hash table.
 
-```
+```C
 // Represents a node in a hash table
 typedef struct node
 {
@@ -335,7 +336,7 @@ node;
 
 We’ve declared a global pointer array, table, which will represent the hash table you will use to keep track of words in the dictionary.
 
-```
+```C
 // Hash table
 node *table[N];
 ```
@@ -356,7 +357,7 @@ The hash function takes a word as input and output a number corresponding to whi
 
 To open the dictionary and return false if the file returns NULL: 
 
-```
+```C
     FILE *dict = fopen(dictionary, "r");
 
     if(dict == NULL){
@@ -366,7 +367,7 @@ To open the dictionary and return false if the file returns NULL:
 
 Read each word in the dictionary: 
 
-```
+```C
     // to store the current word
     char *word[LENGTH];
     // keep reading strings from dict until fscanf returns EOF which is the end of the file
@@ -377,7 +378,7 @@ Read each word in the dictionary:
 
 Create a node for each word, copy word into that node: 
 
-```
+```C
 node *n = malloc(sizeof(node)); // create a node and allocate memory to it
         if(n == NULL){
             return false;
@@ -388,13 +389,13 @@ node *n = malloc(sizeof(node)); // create a node and allocate memory to it
 
 Now let us hash this word: 
 
-```
+```C
 int hash_index = hash(word);
 ```
 
 Here's how the hash function works: 
 
-```
+```C
 // Hashes word to a number
 unsigned int hash(const char *word)
 {
@@ -410,7 +411,7 @@ It takes word as an argument, the take the index of the first character of the w
 
 This function takes a word from the text as an argument and return true if it is in dictionary else it returns false. 
 
-```
+```C
 // Returns true if word is in dictionary, else false
 bool check(const char *word)
 {
@@ -442,7 +443,7 @@ If you went trough the whole linked list and the word is not there then return f
 
 Finally we are going to write a function that free the memory we allocate for each node in our hash table: 
 
-```
+```C
 // Unloads dictionary from memory, returning true if successful, else false
 bool unload(void)
 {
